@@ -1,74 +1,64 @@
-#if 1
 #include <cstdio>
-class taxable_item
+class item
 {
     public:
-    float taxPercent;
-    //taxable_item(float t) { taxPercent=t;};
-    virtual float calculate_tax(float x) { printf("in taxable item calculateTax\n"); return x*taxPercent;} ;
-    //virtual float calculate_tax(float x) = 0;
+        int id;
+        int quantity;
+        //item(int ID):id(ID){ quantity=0;printf("in item constructor\n");};
+        item(){ quantity=0;printf("in item constructor\n");};
 };
 
-class resale : public taxable_item
+class resale : public item
 {
-    public:
-        void do_something() {};
-        void only_for_taxable() {};
-    resale (float t) { taxPercent=t;};
-    //float calculate_tax(float x) override { printf("over riding the base classe\n"); return 0.0;};
-
-};
-
-class cust_item : public taxable_item
-{
+    // a 'resale item' does not have any tax associated with it
     public:
 };
 
+class restricted
+{
+    // a restricted item has additional restrictions on it being purchased.
+    // for this example, lets consider it a purchasers age.
+    public:
+        unsigned int age;
+        restricted() { printf("in restricted constructor\n");};
+};
+
+class sale : public item
+{
+    // a 'sale' item has a sales tax
+        static constexpr float tax=0.05;
+    public:
+        sale(int ID)
+        {
+            printf("i am in the sale constructor\n");
+        }
+        sale(){};
+        //sale(int ID):item(ID)
+        //{
+        //    printf("in the sale constructor\n");
+        //}
+};
+
+class tobacco : public restricted, public sale
+{
+    public:
+        tobacco(){ printf("in tobacco constructor\n");};
+};
 
 int main(int argc, char *argv[])
 {
-        resale  R(0.05);
-        //cust_item T;
-        T = (cust_item) R;
-        printf("tax percent is %f\n",R.taxPercent);
-        R.calculate_tax(100.0);
+    printf("main program\n");
+    item A;
+    //resale B(1);
+    printf("creating C\n");
+    sale C(1);
+    printf("creating D\n");
+    tobacco D;
     return 0;
 }
-#endif
-#if 0
-// pointers to base class
-#include <iostream>
-using namespace std;
-
-class Polygon {
-  protected:
-    int width, height;
-  public:
-    void set_values (int a, int b)
-      { width=a; height=b; }
-};
-
-class Rectangle: public Polygon {
-  public:
-    int area()
-      { return width*height; }
-};
-
-class Triangle: public Polygon {
-  public:
-    int area()
-      { return width*height/2; }
-};
-
-int main () {
-  Rectangle rect;
-  Triangle trgl;
-  Polygon * ppoly1 = &rect;
-  Polygon * ppoly2 = &trgl;
-  ppoly1->set_values (4,5);
-  ppoly2->set_values (4,5);
-  cout << rect.area() << '\n';
-  cout << trgl.area() << '\n';
-  return 0;
-}
-#endif
+// Things to demonstrate:
+//       if there are no arguments to the constructor, the base class is called by the derived class.
+//
+//       if the base class constructor has no arguments, but the derived class does, then a derived class automatically calls the base class constructor
+//
+//       multiple inheritance, calling constructors.
