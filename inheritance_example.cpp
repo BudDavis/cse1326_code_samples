@@ -32,7 +32,7 @@ class sale : public item
         {
             printf("i am in the sale constructor\n");
         }
-        sale(){};
+        sale(){printf("in the no argmument sale constructor\n");};
         //sale(int ID):item(ID)
         //{
         //    printf("in the sale constructor\n");
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     item A;
     //resale B(1);
     printf("creating C\n");
-    sale C(1);
+    sale C;
     printf("creating D\n");
     tobacco D;
     return 0;
