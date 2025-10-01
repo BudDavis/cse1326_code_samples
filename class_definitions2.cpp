@@ -29,6 +29,14 @@ struct Cat
         snout = orig.snout;
         works_as_a = orig.works_as_a; 
     }
+    ~Cat()
+    {
+        if (name) 
+        { 
+            free(name);
+            name=nullptr;
+        }
+    }
 };
 
 std::vector<Cat> cats;
@@ -41,9 +49,23 @@ int main(int argc,char *argv[])
     cats.push_back(*B);
     printf("before pushing A\n");
     cats.push_back(*B);
+
+    int count=0;
+    for ( auto cat:cats)
+    {
+        if ((cat.snout== Nose::PINK) && (cat.works_as_a == job::COMPANION) )
+        {
+            count++;
+        }
+    }
+    printf("%d cats meet the criteria\n",count);
+
+
+#if 0
     Cat& C = *B;
     cats.push_back(C);
     delete B;
     printf("before the return \n");
+#endif
     return 0;
 }
