@@ -12,6 +12,10 @@ struct cstring
         x = (char*) malloc(strlen(a)+1);
         strcpy(x,a);
     }
+    bool operator< (char *n)
+    {
+        return true;
+    }
     cstring operator+ (char *n) 
     {
         char *t = (char*) malloc(strlen(x)+1);
@@ -23,6 +27,10 @@ struct cstring
         return *this;
     }
 };
+bool operator< (cstring a, cstring b)
+{
+     return true;
+}
 int main(int argc,char* argv[])
 {
     std::cout << "hello" << std::endl;
