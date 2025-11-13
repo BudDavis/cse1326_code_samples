@@ -13,6 +13,7 @@ void thread1()
     for (int i=0;i<49;i++)
     {
        xTotal=xTotal + x[i];
+       sleep(5);
     }
     return;
 }
@@ -22,6 +23,7 @@ void thread2()
     for (int i=50;i<100;i++)
     {
        yTotal=yTotal + x[i];
+       sleep(5);
     }
     return;
 }
