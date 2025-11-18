@@ -21,6 +21,8 @@ int main(int argc,char* argv[])
     // this one has a key that is not part of the value 
     std::map<std::string,dog> dogs;
 
+    std::cout << "is dogs empty? " << dogs.empty() << std::endl;
+
     // insert
     dog D(std::string("terrier"),10,std::string("brown"));
     dogs.insert({std::string("rover"),D});
@@ -34,6 +36,7 @@ int main(int argc,char* argv[])
     std::cout << "rover is a " << d.color << " " << d.breed << std::endl;
     // or use d["rover"]
     //
+    
     // remove
     dogs.erase("little rover");
     std::cout << "there are " << dogs.size() << " dogs " << std::endl;
@@ -65,9 +68,8 @@ int main(int argc,char* argv[])
         std::cout << "found " << std::endl;
         std::cout << '\t' << it->first << std::endl;
         std::cout << '\t' << it->second.breed << std::endl;
-
     }
-
+return 0;
     // iterator for loop
     std::cout << "iterator for loop" << std::endl;
     for (auto it=dogs.begin();it!=dogs.end();it++)
