@@ -1,15 +1,31 @@
-#include "board.hpp"
-#include "move.hpp"
-#include "position.hpp"
-
-
-
-#define BOOST_TEST_MODULE legalMoves 
+#define BOOST_TEST_MODULE valid 
 #include <boost/test/included/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(legal_move_1)
+struct TempSensor
 {
-    board B;
-    move M(position(1,1),position(1,3));
-    BOOST_CHECK( B.legal_move(M));
+    double value;
+    double highest;
+    double lowest;
+    TempSensor(double V)
+    {
+        highest = V;
+        lowest = V;
+        value = V;
+    }
+    updateValue(double V)
+    {
+        value = V;
+        if (value<lowest)
+            lowest = V;
+        if (value>highest)
+            highest = V;
+    }
 }
+BOOST_AUTO_TEST_CASE(test_highest)
+{
+
+
+}
+
+
+
+
