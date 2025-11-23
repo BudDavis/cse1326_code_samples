@@ -7,10 +7,11 @@
 int main() {
     Fl_Window* window = new Fl_Window(300, 200, "Lambda Callback Example");
     Fl_Button* button = new Fl_Button(50, 50, 100, 30, "Click Me");
+    button->color(FL_GREEN);
 
     // Non-capturing lambda
     button->callback([](Fl_Widget* w, void* user_data) {
-        fl_alert("Button clicked!");
+            w->color(FL_RED);
     });
 
     window->end();
