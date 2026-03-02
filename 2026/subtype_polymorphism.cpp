@@ -9,10 +9,11 @@ struct Cat
 	{
 		std::cout << "this cat has eaten " << numMice << " and slept " << hoursSlept << std::endl;
 	}
-	virtual void worksHours (int n) = 0;
-	//virtual void worksHours (int n)
-	//{
-	//}
+	//virtual void worksHours (int n) = 0;
+	virtual void worksHours (int n)
+	{
+		std::cout << "this is the function that does nothing" << std::endl;
+	}
 	Cat()
 	{
 		std::cout << "Cat constructor " << std::endl;
@@ -61,8 +62,10 @@ struct houseCat : public Cat
 
 int main(int argc, char*argv[])
 {
+	Cat ordinaryCat;
 	houseCat Lila;
 	barnCat Tiger;
+	ordinaryCat.worksHours(12);
 	Lila.worksHours(1);
 	Tiger.worksHours(2);
 	Lila.status();
