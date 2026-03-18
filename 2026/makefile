@@ -1,1 +1,1 @@
-CXXFLAGS=-Wall -std=gnu++17
+CXXFLAGS=-g -Wall -std=gnu++17
