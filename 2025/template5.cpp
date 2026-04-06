@@ -1,22 +1,27 @@
 #include <iostream>
-#include <vector>
+#include <array>
 
 template <typename T>
-	T sum(std::vector<T> v)
+	int smallest(T V)
 	{
-		T total=0;
-		for (T i:v)
+		int smallestIdx = 0;
+		for (unsigned int i=0;i<V.size();i++)
 		{
-			total+=i;
+		   if (V[smallestIdx] > V[i])
+		   { 
+			   smallestIdx = i;
+		   }	   
 		}
-		return total;
+		return smallestIdx;
 	}
 
 int main (int argc, char* argv[])
 {
-	std::vector<int> x={1,2};
-	std::cout << sum<int>(x) << std::endl;
-	std::vector<float> f = {1.0,0.100};
-	std::cout << sum<float>(f) << std::endl;
+	std::array<int,3> A = {3,2,1};
+	std::cout << smallest(A) << std::endl;
+	std::array<char,3> B = {'c','d','a'};
+	std::cout << smallest(B) << std::endl;
+	std::array<double,3> C = {0.001,0.1,1000.0};
+	std::cout << smallest(C) << std::endl;
 	return 0;
 }
