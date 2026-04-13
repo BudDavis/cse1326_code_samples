@@ -1,0 +1,1 @@
+g++  -Wall -std=gnu++17 -g `pkg-config gtkmm-4.0 --libs gtkmm-4.0 --cflags`   minimal_gtk.cpp   -o minimal_gtk
