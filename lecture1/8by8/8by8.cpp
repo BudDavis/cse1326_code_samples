@@ -128,6 +128,7 @@ bool qconflicts(queen_positions_t q, int *idx)
 	// the index of the 'highest conflict' queen is returned 
 	int conflicts[N] = {0};
 	int max = -1;
+	bool noConflicts=true;
 	for (int i=0;i<N;i++)
 	{
 		if (q[i].valid)
@@ -135,6 +136,7 @@ bool qconflicts(queen_positions_t q, int *idx)
 			conflicts[i]= num_conflicts(q,q[i].row,q[i].col);
 			if (conflicts[i] && conflicts[i]>max)
 			{
+				noConflicts = false;
 				max = conflicts[i];
 				*idx = i;
 			}
@@ -143,9 +145,17 @@ bool qconflicts(queen_positions_t q, int *idx)
 	std::cout << "qconflicts" << std::endl;
 	for (int i=0;i<N;i++)
 		std::cout << "conflicts[" << i << "]=" << conflicts[i] << std::endl;
-        std::cout << "the point with the most conflicts is " << q[*idx].row << " " << q[*idx].col << std::endl;
-	std::cout << "max = " << max << std::endl;
-	return max!=-1;
+
+	if (noConflicts)
+	{
+		return false;
+	}
+	else
+	{
+        	std::cout << "the point with the most conflicts is " << q[*idx].row << " " << q[*idx].col << std::endl;
+		std::cout << "max = " << max << std::endl;
+		return max!=-1;
+	}
 }
 
 int find_idx(queen_positions_t q,int col)
@@ -215,8 +225,8 @@ int main(int argc, char* argv[])
 		int dest = destination(q, q[idx].col);
 		std::cout << "the destination is " << std::endl;
 		// swap them
-		//std::cout << "SWAPPING " << q[idx].row << " and " << smallestIdx << std::endl;
-                //q[idx].row = smallestIdx;
+		std::cout << "SWAPPING " << q[idx].row << " and " << dest << std::endl;
+                q[idx].row = dest;
 		print(q);
 	}
 
