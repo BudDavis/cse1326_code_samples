@@ -5,6 +5,12 @@
 #define UNIT_TEST
 #include "8by8.cpp"
 
+BOOST_AUTO_TEST_CASE(diagonal)
+{
+	// this is a diagonal
+	queen_positions_t q={ {true,0,0},{true,1,1},{true,2,2},{true,3,3},{true,4,4},{true,5,5},{true,6,6},{true,7,7} };
+
+}
 BOOST_AUTO_TEST_CASE(positions)
 {
 //bool qconflicts(queen_positions_t q, int *idx)

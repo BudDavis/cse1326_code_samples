@@ -84,12 +84,10 @@ int num_conflicts(queen_positions_t q,int row,int col)
 {
 	// returns the number of conflicts for a specific [row][col]
 	int retval = 0;
-        //std::cout << "checking pos " << row << " " << col << std::endl;
 	for (unsigned int i=0;i<N;i++)
 	{
 		if (q[i].valid && !(q[i].row==row && q[i].col==col))
 		{
-			//std::cout << "point is " << q[i].row << " " << q[i].col << " ";
 			double m;
 		        if (q[i].row-row == 0)
 			{
@@ -142,10 +140,12 @@ bool qconflicts(queen_positions_t q, int *idx)
 			}
 		}
 	}
-	std::cout << "qconflicts" << std::endl;
+	std::cout << "conflicts " << std::endl;
 	for (int i=0;i<N;i++)
-		std::cout << "conflicts[" << i << "]=" << conflicts[i] << std::endl;
-
+	{
+		std::cout << "[" << i << "]=" << conflicts[i] << " ";
+	}
+        std::cout << std::endl;
 	if (noConflicts)
 	{
 		return false;
@@ -192,8 +192,9 @@ int destination(queen_positions_t q, int col)
 		r[idx].row  = row;
 		r[idx].col = col;
 		results[row] =  num_conflicts(r,r[idx].row,r[idx].col);
-		std::cout << row << "" << results[row] << std::endl;
+		std::cout << "[" << row << "]= " << results[row] << " ";
 	}
+	std::cout << std::endl;
 	int min = 999;
 	int minIdx = -1;
 	for (int i=0;i<N;i++)
@@ -209,25 +210,31 @@ int destination(queen_positions_t q, int col)
 	return minIdx;
 }
 
+void move_queen(queen_positions_t q,int idx)
+{
+	// there are conflicts, and the idx points to the biggest one
+	std::cout << "the col being targeted is " << q[idx].col << std::endl;
+	int dest = destination(q, q[idx].col);
+	std::cout << "the destination is " << dest << std::endl;
+	// swap them
+	std::cout << "SWAPPING " << q[idx].row << " and " << dest << std::endl;
+	q[idx].row = dest;
+	print(q);
+}
+
 #ifndef UNIT_TEST
 int main(int argc, char* argv[])
 {
 	// make a list of queen positions
-	//queen_positions_t q={ {true,0,0},{true,1,1},{true,2,2},{true,3,3},{true,4,4},{true,5,5},{true,6,6},{true,7,7} };
+	queen_positions_t q={ {true,0,0},{true,1,1},{true,2,2},{true,3,3},{true,4,4},{true,5,5},{true,6,6},{true,7,7} };
         //queen_positions_t q={ {true,0,0},{true,6,1},{true,4,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; // a solution
-        queen_positions_t q={ {true,0,0},{true,6,1},{true,2,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; // a solution
+        //queen_positions_t q={ {true,0,0},{true,6,1},{true,2,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; // a solution
 
 	print(q);
         int idx;
 	while (qconflicts(q,&idx))
 	{
-		std::cout << "the col being targeted is " << q[idx].col << std::endl;
-		int dest = destination(q, q[idx].col);
-		std::cout << "the destination is " << std::endl;
-		// swap them
-		std::cout << "SWAPPING " << q[idx].row << " and " << dest << std::endl;
-                q[idx].row = dest;
-		print(q);
+		move_queen(q,idx);
 	}
 
 	std::cout << std::endl;
