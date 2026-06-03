@@ -1,5 +1,6 @@
 #include <iostream>
-#include <cstring>
+#include <cassert>
+#include <random>
 /*
  * this program solves the '8 queen problem'
  * for info, see https://en.wikipedia.org/wiki/Eight_queens_puzzle
@@ -46,6 +47,8 @@ bool is_white(int row, int col)
 
 void print(queen_positions_t q)
 {
+	// process the whole board
+	// and display any queens in the correct row,col
 	for (int row=0;row<N;row++)
 	{
 		for (int col=0;col<N;col++)
@@ -55,18 +58,23 @@ void print(queen_positions_t q)
 			// could be any one in the list
 			for (int i=0;i<N;i++)
 			{
-				if (q[i].row == row && q[i].col==col && q[i].valid)
+				if (q[i].valid && (q[i].row == row) && (q[i].col==col))
 				{
 					isQueen = true;
 				}
 			}
 
+			// this is an ugly piece of code...
 			if (is_white(row,col))
 			{
 				if (isQueen)
+				{
 					std::cout << " Q ";
+				}
 				else
+				{
 					std::cout << "   ";
+				}
 			}
 			else
 			{
@@ -100,6 +108,7 @@ int num_conflicts(queen_positions_t q,int row,int col)
 				retval++;
 				//std::cout << "they are in the same column" << std::endl;
 				// should never get here
+				assert(1);
 			}
 			else
 			{
@@ -140,20 +149,35 @@ bool qconflicts(queen_positions_t q, int *idx)
 			}
 		}
 	}
-	std::cout << "conflicts " << std::endl;
-	for (int i=0;i<N;i++)
+	if (!noConflicts)
 	{
-		std::cout << "[" << i << "]=" << conflicts[i] << " ";
-	}
-        std::cout << std::endl;
+		std::cout << "conflicts " << std::endl;
+		std::cout << '\t';
+		for (int i=0;i<N;i++)
+		{
+			if (*idx == i)
+			{
+				// red
+				std::cout << "\033[31m";
+			}
+
+			std::cout << "[" << q[i].row << "," << q[i].col << "] = " << conflicts[i] << " ";
+
+			if (*idx == i)
+			{
+				// reset to normal text
+				std::cout <<  "\033[0m";
+			}
+		}
+        }
 	if (noConflicts)
 	{
+		std::cout << "solved" << std::endl;	
 		return false;
 	}
 	else
 	{
-        	std::cout << "the point with the most conflicts is " << q[*idx].row << " " << q[*idx].col << std::endl;
-		std::cout << "max = " << max << std::endl;
+        	std::cout << std::endl;
 		return max!=-1;
 	}
 }
@@ -171,15 +195,20 @@ int find_idx(queen_positions_t q,int col)
 	return idx;
 }
 
-int destination(queen_positions_t q, int col)
+int destination(queen_positions_t q, int col, int row_)
 {
 	// given a column, find the best place to place the queen.
-	// it will have the minimum number of conflicts.  int retval; for (int row=0;row<N;row++)
-	int results[N] = {0};
+	// it will have the minimum number of conflicts.
+	int results[N] = {99};
+	queen_positions_t r;
+	std::cout << "in destination row = " << row_ << " " << "col = " << col << std::endl;
 	for (int row=0;row<N;row++)
 	{
-		queen_positions_t r;
-		memcpy(r,q,sizeof(queen_positions_t)); // lazy way to do it
+		for (int i=0;i<N;i++)
+		{
+			r[i] = q[i];
+		}
+		//memcpy(r,q,sizeof(queen_positions_t)); // lazy way to do it
 		// find the index in the list we care about
 		// note that there is only 1 queen in each column (top level contraint) int idx=-1;
 		int idx = find_idx(r,col);
@@ -191,10 +220,15 @@ int destination(queen_positions_t q, int col)
 		r[idx].valid = true;
 		r[idx].row  = row;
 		r[idx].col = col;
-		results[row] =  num_conflicts(r,r[idx].row,r[idx].col);
-		std::cout << "[" << row << "]= " << results[row] << " ";
+		if (row == row_)
+		{
+			results[row] = 99;
+		}
+		else
+		{
+			results[row] =  num_conflicts(r,r[idx].row,r[idx].col);
+		}
 	}
-	std::cout << std::endl;
 	int min = 999;
 	int minIdx = -1;
 	for (int i=0;i<N;i++)
@@ -205,20 +239,39 @@ int destination(queen_positions_t q, int col)
 			minIdx = i;
 		}
 	}
-	std::cout << "the min is " << minIdx << std::endl;
-	std::cout << "row = " << minIdx << " col = " << col << std::endl;
+	// print out the details
+	std::cout << "targets" << std::endl;
+	std::cout << '\t';
+	for (int i=0;i<N;i++)
+	{
+		// print out the min in green
+		if (i==minIdx)
+		{
+			std::cout << "\033[32m";
+                }
+		std::cout << "[" << i << "," << col << "] = " << results[i] << " ";
+		if (i==minIdx)
+		{
+			std::cout << "\033[0m";
+		}
+	}
+	std::cout << std::endl;
 	return minIdx;
 }
 
 void move_queen(queen_positions_t q,int idx)
 {
 	// there are conflicts, and the idx points to the biggest one
-	std::cout << "the col being targeted is " << q[idx].col << std::endl;
-	int dest = destination(q, q[idx].col);
-	std::cout << "the destination is " << dest << std::endl;
+	int dest = destination(q, q[idx].col,q[idx].row);
+
 	// swap them
-	std::cout << "SWAPPING " << q[idx].row << " and " << dest << std::endl;
+	std::cout << "swapping" << std::endl;
+	std::cout << '\t';
+	std::cout <<  "[" << q[idx].row << "," << q[idx].col << "] and ";
+			
 	q[idx].row = dest;
+
+	std::cout << "[" << q[idx].row << "," << q[idx].col << "]" << std::endl;
 	print(q);
 }
 
@@ -226,10 +279,10 @@ void move_queen(queen_positions_t q,int idx)
 int main(int argc, char* argv[])
 {
 	// make a list of queen positions
-	queen_positions_t q={ {true,0,0},{true,1,1},{true,2,2},{true,3,3},{true,4,4},{true,5,5},{true,6,6},{true,7,7} };
-        //queen_positions_t q={ {true,0,0},{true,6,1},{true,4,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; // a solution
-        //queen_positions_t q={ {true,0,0},{true,6,1},{true,2,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; // a solution
-
+	//queen_positions_t q={ {true,0,0},{true,1,1},{true,2,2},{true,3,3},{true,4,4},{true,5,5},{true,6,6},{true,7,7} };
+        queen_positions_t q={ {true,0,0},{true,6,1},{true,4,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; // a solution
+        //queen_positions_t q={ {true,0,0},{true,6,1},{true,2,2},{true,7,3},{true,1,4},{true,3,5},{true,5,6},{true,2,7} }; 
+	std::cout << "original" << std::endl;
 	print(q);
         int idx;
 	while (qconflicts(q,&idx))
