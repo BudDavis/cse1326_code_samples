@@ -86,7 +86,7 @@ int findMaxIdx(conflicts_t c,board_t mask)
 			max=c[i];
 		}
 	}
-	std::cout << "the max is " << max << std::endl;
+	//std::cout << "Max column is " << max << std::endl;
 	// the max has been found, now let's find the position
 	// with the same value (the max) that has been used the least
         int usedLeast=999;
@@ -102,6 +102,7 @@ int findMaxIdx(conflicts_t c,board_t mask)
 			}
 		}
 	}
+	std::cout << "Max column is " << usedLeastIdx << " max " << max << std::endl;
         history[usedLeastIdx]++;	
 	return usedLeastIdx;
 }
@@ -111,14 +112,27 @@ bool is_white(int row, int col)
 	return (col+row)%2==0;
 }
 
+void printPos(qpos_t q)
+{
+	for (int i=0;i<N;i++)
+	{
+		std::cout << " " << q[i] << " ";
+	}
+	std::cout << std::endl;
+}
+
 void printConflictVector(conflicts_t c)
 {
-	std::cout << "conflicts ";
+	std::cout << "Conflicts ";
 	for (int i=0;i<N;i++)
 	{
 		std::cout << c[i] << " ";
 	}
 	std::cout << std::endl;
+	if (!sum(c))
+	{
+		std::cout << "The puzzle is solved" << std::endl;
+	}
 }
 
 void print(qpos_t q)
@@ -220,7 +234,6 @@ void whereToMove(qpos_t q,int row,int col,int* toRow,int* toCol)
 
 	for (int i=0;i<N;i++)
 	{
-		conflicts_t local_c = {0};
 		if (row==i)
 		{
 			c[i]=99;
@@ -230,14 +243,9 @@ void whereToMove(qpos_t q,int row,int col,int* toRow,int* toCol)
 		// put the queen here
 		local_q[col] = i;
                 c[i] = singleConflict(local_q,col);
-		//std::cout << "calculating c[i] for i = " << i << " value " << c[i] << std::endl;
-		//std::cout << std::endl;
-                //print(local_q);
-		//printConflictVector(local_c);
-		//std::cout << std::endl;
 	}
-	std::cout << "checking each pos in the row ";
-	printConflictVector(c);
+	//std::cout << "checking each pos in the row ";
+	//printConflictVector(c);
 	// find the min value
 	int min = 99;
 	for (int i=0;i<N;i++)
@@ -260,7 +268,7 @@ void whereToMove(qpos_t q,int row,int col,int* toRow,int* toCol)
 			}
 		}
 	}
-	std::cout << "minHistory IDX is " << minHistoryIdx << " min is " << minHistory << std::endl;
+	std::cout << "minHistory column is " << minHistoryIdx << " min is " << minHistory << std::endl;
 	history[minHistoryIdx]++;
         *toRow = minHistoryIdx;
 	*toCol = col;
@@ -278,35 +286,36 @@ void move(qpos_t q,int row,int col,int toRow,int toCol)
 #ifndef UNIT_TEST
 int main(int argc, char* argv[])
 {
-	std::cout << "[Row,Col]" << std::endl;
-	qpos_t q = {0,1,2,3,4,5,6,7};
-	//qpos_t q = {0,0,0,0,0,0,0,0};
+	int pass = 0;
+	//qpos_t q = {0,1,2,3,4,5,6,7}; // crazy way to start
+	qpos_t q = {0,0,0,0,0,0,0,0};
+	//qpos_t q = {1,1,1,1,1,1,1,1};
 	//qpos_t q = {7,7,7,7,7,7,7,7};
 	//qpos_t q = {0,6,4,7,1,3,5,2}; // a solution
-	//qpos_t q = {1,6,4,7,1,3,5,2};
-
-	std::cout << "Original" << std::endl;
-        print(q);
-	conflicts_t c = {0};
-        int passes = 0; // detect infinite loops
-	while ( conflicts(q,c)  && passes++<999 )
+	//qpos_t q = {1,6,4,7,1,3,5,2};   // one move away from a solution
+	bool solved = false;
+	std::cout << "[Row,Col]" << std::endl;
+	while ( !solved )
 	{
-		std::cout << std::endl;
-		std::cout << "Pass " << passes << std::endl;
-		int row;
-		int col;
-                queenToMove(q, c, &row, &col);
-		int toRow;
-		int toCol;
-		whereToMove(q,row,col,&toRow,&toCol);
-		move(q,row,col,toRow,toCol);
-		std::cout << "Pass " << passes << std::endl;
+		pass++;
+		conflicts_t c = {0};
+		solved = !conflicts(q,c);
+		std::cout << "Pass -------" << pass << " -------" << std::endl;
+		printPos(q);
 		print(q);
 		printConflictVector(c);
-		std::cout << "the queen to move is " << row << " " << col << std::endl;
-		std::cout << "moving " << row << " col " << col << " to " << toRow << "  " << toCol << std::endl;
-		// get ready for the next pass through
-		zero(c);
+		if (!solved)
+		{
+			int row;
+			int col;
+                	queenToMove(q, c, &row, &col);
+			int toRow;
+			int toCol;
+			whereToMove(q,row,col,&toRow,&toCol);
+			move(q,row,col,toRow,toCol);
+			// get ready for the next pass through
+			zero(c);
+		}
 	}
 	std::cout << std::endl;
 	return 0;
